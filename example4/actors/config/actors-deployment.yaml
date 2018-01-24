@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: actors
+  labels:
+    app: actors
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: actors
+    spec:
+      containers:
+      - name: actors
+        image: gsanjeev/actors:0.0.1-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+        - name: SERVER_PORT
+          value: '80'
+        - name: SPRING_PROFILES_ACTIVE
+          value: kubernetes
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: mysql-root-password
+        volumeMounts:
+        - name: application-config 
+          mountPath: "/config" 
+          readOnly: true
+      volumes:
+      - name: application-config
+        configMap:
+          name: actors 
+          items:
+          - key: application.yaml 
+            path: application-kubernetes.yaml
