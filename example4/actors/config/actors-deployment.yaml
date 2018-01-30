@@ -17,6 +17,27 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
+        resources:
+          limits:
+            cpu: 1.0
+            memory: 512Mi
+          requests:
+            cpu: 0.5
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 80
+          initialDelaySeconds: 180
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 80
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10            
         env:
         - name: SERVER_PORT
           value: '80'
